@@ -1,0 +1,12 @@
+{application, cowboy_chat,
+ [
+  {description, ""},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { cowboy_chat_app, []}},
+  {env, []}
+ ]}.
