@@ -46,7 +46,7 @@ msg(Msg) ->
 start_link() ->
     Dispatch = [
 		{'_', [
-		       {'_', chat_handler, []}
+		       {'_', chat_handler, []}			   
 		      ]}
 	       ],
     cowboy:start_listener(chat_listener, 100,
@@ -105,12 +105,10 @@ handle_cast({register, Pid}, #state{cons = Cons} = State) ->
     State2 = State#state{cons = [Pid | Cons]},
     {noreply, State2};
 handle_cast({unregsiter, Pid}, #state{cons = Cons} = State) ->
-    Cons2 = lists:filter(fun (APid) ->
-				 Pid =/= APid
-			 end, Cons),
+    Cons2 = lists:delete(Pid, Cons),
     {noreply, State#state{cons = Cons2}};
 handle_cast({msg, Msg}, #state{cons = Cons} = State) ->
-    lists:map(fun (Pid) ->
+    lists:foreach(fun (Pid) ->
 		      Pid ! {msg, Msg}
 	      end, Cons),
     {noreply, State};

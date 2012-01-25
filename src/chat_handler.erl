@@ -37,7 +37,7 @@ handle(Req, State) ->
       }
       if ('WebSocket' in window) {
         // browser supports websockets
-        ws = new WebSocket('ws://localhost:8080/');
+        ws = new WebSocket('ws://' + window.location.host + '/');
         ws.onopen = function() {
           addMsg('websocket connected!');
         };
