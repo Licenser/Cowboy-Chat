@@ -77,7 +77,10 @@ websocket_init(_Any, Req, []) ->
     {ok, Req2, undefined, hibernate}.
 
 websocket_handle({text, Msg}, Req, State) ->
-    cowboy_chat_server:msg(Msg),
+    Msg1 = re:replace(Msg, <<"&">>, <<"\\&amp;">>, [{return,binary}]),
+    Msg2 = re:replace(Msg1, <<"<">>, <<"\\&lt;">>, [{return,binary}]),
+    Msg3 = re:replace(Msg2, <<">">>, <<"\\&gt;">>,[{return,binary}]),
+    cowboy_chat_server:msg(Msg3),
     {ok, Req, State};
 
 websocket_handle(_Any, Req, State) ->
