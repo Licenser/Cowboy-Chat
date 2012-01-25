@@ -114,7 +114,7 @@ handle_cast({msg, Msg}, #state{cons = Cons} = State) ->
 		      Pid ! {msg, Msg}
 	      end, Cons),
     {noreply, State};
-handle_cast(Msg, State) ->
+handle_cast(_Msg, State) ->
     {noreply, State}.
 
 %%--------------------------------------------------------------------
