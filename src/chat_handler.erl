@@ -18,30 +18,28 @@ handle(Req, State) ->
 				       <<"
 <html>
   <head>
-    <script type=\"text/javascript\">
+    <script type='text/javascript'>
     var ws;
     function addMsg(text){
       var content = document.getElementById('content');
-      content.innerHTML = content.innerHTML + text + \"<br/>\";
+      content.innerHTML = content.innerHTML + text + '<br/>';
+      content.lastChild.scrollIntoView();
     }
-    var e;
     function send(input, event) {
-      e = input;
-      name = document.getElementById('name').value;
       if (event.keyCode == 13) {
-        ws.send(name + ': ' + input.value);
+        ws.send(document.getElementById('name').value + ': ' + input.value);
+        input.value = '';
       }
     }
     function ready(){
-      if (\"MozWebSocket\" in window) {
-    
+      if ('MozWebSocket' in window) {
         WebSocket = MozWebSocket;
       }
-      if (\"WebSocket\" in window) {
+      if ('WebSocket' in window) {
         // browser supports websockets
-        ws = new WebSocket(\"ws://localhost:8080/\");
+        ws = new WebSocket('ws://localhost:8080/');
         ws.onopen = function() {
-          addMsg(\"websocket connected!\");
+          addMsg('websocket connected!');
         };
         ws.onmessage = function (evt) {
           var receivedMsg = evt.data;
@@ -49,26 +47,28 @@ handle(Req, State) ->
         };
         ws.onclose = function() {
           // websocket was closed
-          addMsg(\"websocket was closed\");
+          addMsg('websocket was closed');
         };
       } else {
         // browser does not support websockets
-        addStatus(\"sorry, your browser does not support websockets.\"); 
+        addStatus('sorry, your browser does not support websockets.'); 
       }
     }
     </script>
   </head>
-  <body onload=\"ready();\">
-  <div id=\"content\"></div>
-  <input type=\"text\" id='name'/>: 
-  <input type=\"text\" onkeyup=\"send(this, event);\"/>
+  <body onload='ready();'>
+  <div id='content' style='overflow:scroll;height:90%'></div>
+  <div id='input'>
+    <input type='text' id='name'/>: 
+    <input type='text' onkeyup='send(this, event);'/>
+  </div>
   </body>
 </html>">>,
 				       Req),
     {ok, Req2, State}.
 
 terminate(_Req, _State) ->
-    cowboy_chat_server:inregister(self()),
+    cowboy_chat_server:unregister(self()),
     ok.
 
 websocket_init(_Any, Req, []) ->
@@ -80,7 +80,7 @@ websocket_handle({text, Msg}, Req, State) ->
     cowboy_chat_server:msg(Msg),
     {ok, Req, State};
 
-websocket_handle(Any, Req, State) ->
+websocket_handle(_Any, Req, State) ->
     {ok, Req, State}.
 
 
