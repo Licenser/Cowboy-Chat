@@ -83,7 +83,6 @@ websocket_handle({text, Msg}, Req, State) ->
 websocket_handle(_Any, Req, State) ->
     {ok, Req, State}.
 
-
 websocket_info({msg, Msg}, Req, State) ->
     {reply, {text, Msg}, Req, State, hibernate};
 
